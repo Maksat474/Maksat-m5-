@@ -5,55 +5,130 @@ from rest_framework import status
 from . import serializer, models
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def director_list_view(request):
-    director = models.Director.objects.all()
-    data = serializer.DirectorSerializer(director, many=True).data
-    return Response(data=data)
+    if request.method == 'GET':
+        director = models.Director.objects.all()
+        data = serializer.DirectorSerializer(director, many=True).data
+        return Response(data=data)
+    elif request.method == 'POST':
+        serializers = serializer.DirectorCreateUpdateSerializer(data=request.data)
+        if not serializers.is_valid():
+            return Response(data={'errors': serializers.errors},
+                            status=status.HTTP_406_NOT_ACCEPTABLE)
+        print(request.data)
+        name = request.data.get('name')
+        director = models.Director.objects.create(name=name)
+        return Response(data=serializer.DirectorSerializer(director).data,
+                        status=status.HTTP_201_CREATED)
 
 
-@api_view(['GET'])
+@api_view(['GET', 'PUT', 'DELETE'])
 def director_detail_view(request, id):
     try:
-        director_id = models.Movie.objects.get(id=id)
+        director_id = models.Director.objects.get(id=id)
     except models.Director.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND, data={'message': 'Director not found'})
-    data = serializer.DirectorSerializer(director_id).data
-    return Response(data=data)
+    if request.method == 'GET':
+        data = serializer.DirectorSerializer(director_id).data
+        return Response(data=data)
+    elif request.method == 'DELETE':
+        director_id.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT,
+                        data={'message': 'Director has been deleted'})
+    elif request.method == 'PUT':
+        director_id.name = request.data.get('name')
+        director_id.save()
+        return Response(data=serializer.DirectorSerializer(director_id).data)
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def movie_list_view(request):
-    movie = models.Movie.objects.all()
-    data = serializer.MovieSerializer(movie, many=True).data
-    return Response(data=data)
+    if request.method == 'GET':
+        movie = models.Movie.objects.all()
+        data = serializer.MovieSerializer(movie, many=True).data
+        return Response(data=data)
+    elif request.method == 'POST':
+        serializers = serializer.MovieCreateUpdateSerializer(data=request.data)
+        if not serializers.is_valid():
+            return Response(data={'errors': serializers.errors},
+                            status=status.HTTP_406_NOT_ACCEPTABLE)
+        print(request.data)
+        title = request.data.get('title')
+        description = request.data.get('description')
+        duration = request.data.get('duration')
+        director_id = request.data.get('director_id')
+        movie = models.Movie.objects.create(title=title, description=description, duration=duration,
+                                                director_id=director_id)
+        for i in request.data.get("reviews", []):
+            models.Review.objects.create(stars=i['stars'], text=i['text'], movie=movie)
+
+        return Response(data=serializer.MovieSerializer(movie).data,
+                        status=status.HTTP_201_CREATED)
+        # return Response(data={'message': 'Данные отправлены'})
 
 
-@api_view(['GET'])
+@api_view(['GET', 'PUT', 'DELETE'])
 def movie_detail_view(request, id):
     try:
         movie_id = models.Movie.objects.get(id=id)
     except models.Movie.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND, data={'message': 'Movie not found'})
-    data = serializer.MovieSerializer(movie_id).data
-    return Response(data=data)
+    if request.method == 'GET':
+        data = serializer.MovieSerializer(movie_id).data
+        return Response(data=data)
+    elif request.method == 'DELETE':
+        movie_id.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT,
+                        data={'message': 'Movie has been deleted'})
+    elif request.method == 'PUT':
+        movie_id.title = request.data.get('title')
+        movie_id.description = request.data.get('description')
+        movie_id.duration = request.data.get('duration')
+        movie_id.director_id = request.data.get('director_id')
+        movie_id.save()
+        return Response(data=serializer.MovieSerializer(movie_id).data)
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def review_list_view(request):
-    review = models.Review.objects.all()
-    data = serializer.ReviewSerializer(review, many=True).data
-    return Response(data=data)
+    if request.method == 'GET':
+        review = models.Review.objects.all()
+        data = serializer.ReviewSerializer(review, many=True).data
+        return Response(data=data)
+    elif request.method == 'POST':
+        serializers = serializer.ReviewCreateUpdateSerializer(data=request.data)
+        if not serializers.is_valid():
+            return Response(data={'errors': serializers.errors},
+                            status=status.HTTP_406_NOT_ACCEPTABLE)
+        print(request.data)
+        text = request.data.get('text')
+        movie = request.data.get('movie')
+        stars = request.data.get('stars')
+        review = models.Review.objects.create(text=text, movie=movie, stars=stars)
+        return Response(data=serializer.ReviewSerializer(review).data,
+                        status=status.HTTP_201_CREATED)
 
 
-@api_view(['GET'])
+@api_view(['GET', 'PUT', 'DELETE'])
 def review_detail_view(request, id):
     try:
-        review_id = models.Movie.objects.get(id=id)
+        review_id = models.Review.objects.get(id=id)
     except models.Review.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND, data={'message': 'Review not found'})
-    data = serializer.ReviewSerializer(review_id).data
-    return Response(data=data)
+    if request.method == 'GET':
+        data = serializer.ReviewSerializer(review_id).data
+        return Response(data=data)
+    elif request.method == 'DELETE':
+        review_id.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT,
+                        data={'message': 'Review has been deleted'})
+    elif request.method == 'PUT':
+        review_id.text = request.data.get('text')
+        review_id.movie = request.data.get('movie')
+        review_id.stars = request.data.get('stars')
+        review_id.save()
+        return Response(data=serializer.MovieSerializer(review_id).data)
 
 
 @api_view(['GET'])

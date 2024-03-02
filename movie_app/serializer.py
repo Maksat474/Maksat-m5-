@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from . import models
+from rest_framework.exceptions import ValidationError
 
 
 class DirectorSerializer(serializers.ModelSerializer):
@@ -33,3 +34,35 @@ class MovieSerializer(serializers.ModelSerializer):
             return total_stars / num_reviews
         else:
             return 0.0
+
+
+class ReviewCreateSerializer(serializers.Serializer):
+    stars = serializers.IntegerField(min_value=1, max_value=5)
+    text = serializers.CharField(max_length=60)
+
+
+class MovieCreateUpdateSerializer(serializers.Serializer):
+    title = serializers.CharField(min_length=2, max_length=10)
+    description = serializers.CharField()
+    price = serializers.FloatField()
+    category_id = serializers.IntegerField()
+    reviews = serializers.ListField(child=ReviewCreateSerializer())
+
+    # list_ = serializers.ListField()
+    # object_ = ObjectCreateSerializer()
+
+    def validate(self, category_id):
+        if models.Category.objects.filter(id=category_id).count() == 0:
+            raise ValidationError(f"Category with id {id} does not exist")
+
+
+class DirectorCreateUpdateSerializer(serializers.Serializer):
+    name = serializers.CharField(min_length=5, max_length=40)
+
+
+class ReviewCreateUpdateSerializer(serializers.Serializer):
+    text = serializers.CharField()
+    movie = serializers.CharField()
+    stars = serializers.IntegerField(default=1)
+
+

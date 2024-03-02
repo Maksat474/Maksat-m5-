@@ -24,8 +24,9 @@ class Movie(models.Model):
         return self.reviews.all().count()
 
     @property
-    def rating(self):
-        return Review.objects.filter(movie=self).aggregate(Avg('stars'))
+    def get_avarage_rating(self, object):
+        total_stars = sum(review.stars for review in object.reviews.all())
+        num_reviews = object.reviews.count()
 
 
 class Review(models.Model):
