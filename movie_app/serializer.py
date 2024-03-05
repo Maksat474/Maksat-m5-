@@ -34,3 +34,42 @@ class MovieSerializer(serializers.ModelSerializer):
             return total_stars / num_reviews
         else:
             return 0.0
+
+
+class DirectorCreateUpdateSerializer(serializers.Serializer):
+    name = serializers.CharField(min_length=5, max_length=40)
+
+    def validate_name_min_length(value, min_length):
+        if len(value) < min_length:
+            raise serializers.ValidationError(f'Минимальная длина для поля {value} равна {min_length}')
+        return value
+
+
+class MovieCreateUpdateSerializer(serializers.Serializer):
+    title = serializers.CharField()
+    description = serializers.CharField()
+    duration = serializers.CharField()
+    director_id = serializers.IntegerField()
+    # reviews = serializers.ListField(child=ReviewCreateSerializer())
+
+    def validate_director_id(self, director_id):
+        if models.Director.objects.filter(id=director_id).count() == 0:
+            raise ValidationError(f"Director with id {director_id} does not exist")
+
+    # def validate(self, attrs):
+    #     id = attrs['director_id']
+    #     try:
+    #         models.Director.objects.get(id=id)
+    #     except:
+    #         raise ValidationError(f"Director with id {id} does not exist")
+    #     return attrs
+
+
+class ReviewCreateUpdateSerializer(serializers.Serializer):
+    text = serializers.CharField()
+    movie = serializers.CharField()
+    stars = serializers.IntegerField()
+
+    def validate_movie(self, movie):
+        if models.Movie.objects.filter(id=movie).count() == 0:
+            raise ValidationError(f"Movie with id {movie} does not exist")

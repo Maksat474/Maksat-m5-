@@ -12,6 +12,10 @@ def director_list_view(request):
         data = serializer.DirectorSerializer(director, many=True).data
         return Response(data=data)
     elif request.method == 'POST':
+        serializers = serializer.DirectorCreateUpdateSerializer(data=request.data)
+        if not serializers.is_valid():
+            return Response(data={'errors': serializers.errors},
+                            status=status.HTTP_406_NOT_ACCEPTABLE)
         # name = request.data.get('name')
         director = models.Director.objects.create(**request.data)
         return Response(data=serializer.DirectorSerializer(director).data,
@@ -44,6 +48,11 @@ def movie_list_view(request):
         data = serializer.MovieSerializer(movie, many=True).data
         return Response(data=data)
     elif request.method == 'POST':
+        serializers = serializer.MovieCreateUpdateSerializer(data=request.data)
+        if not serializers.is_valid():
+            return Response(data={'errors': serializers.errors},
+                            status=status.HTTP_406_NOT_ACCEPTABLE)
+        print(request.data)
         # title = request.data.get('title')
         # description = request.data.get('description')
         # duration = request.data.get('duration')
@@ -84,6 +93,11 @@ def review_list_view(request):
         data = serializer.ReviewSerializer(review, many=True).data
         return Response(data=data)
     elif request.method == 'POST':
+        serializers = serializer.ReviewCreateUpdateSerializer(data=request.data)
+        if not serializers.is_valid():
+            return Response(data={'errors': serializers.errors},
+                            status=status.HTTP_406_NOT_ACCEPTABLE)
+        print(request.data)
         # text = request.data.get('text')
         # movie = request.data.get('movie')
         # stars = request.data.get('stars')
