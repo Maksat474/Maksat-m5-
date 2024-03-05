@@ -59,9 +59,7 @@ def movie_list_view(request):
         duration = request.data.get('duration')
         director_id = request.data.get('director_id')
         movie = models.Movie.objects.create(title=title, description=description, duration=duration,
-                                                director_id=director_id)
-        for i in request.data.get("reviews", []):
-            models.Review.objects.create(stars=i['stars'], text=i['text'], movie=movie)
+                                            director_id=director_id)
 
         return Response(data=serializer.MovieSerializer(movie).data,
                         status=status.HTTP_201_CREATED)

@@ -42,18 +42,18 @@ class ReviewCreateSerializer(serializers.Serializer):
 
 
 class MovieCreateUpdateSerializer(serializers.Serializer):
-    title = serializers.CharField(min_length=2, max_length=10)
+    title = serializers.CharField()
     description = serializers.CharField()
-    price = serializers.FloatField()
-    category_id = serializers.IntegerField()
-    reviews = serializers.ListField(child=ReviewCreateSerializer())
+    duration = serializers.CharField()
+    director_id = serializers.IntegerField()
+    # reviews = serializers.ListField(child=ReviewCreateSerializer())
 
     # list_ = serializers.ListField()
     # object_ = ObjectCreateSerializer()
 
-    def validate(self, category_id):
-        if models.Category.objects.filter(id=category_id).count() == 0:
-            raise ValidationError(f"Category with id {id} does not exist")
+    # def validate(self, category_id):
+    #     if models.Category.objects.filter(id=category_id).count() == 0:
+    #         raise ValidationError(f"Category with id {id} does not exist")
 
 
 class DirectorCreateUpdateSerializer(serializers.Serializer):
