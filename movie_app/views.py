@@ -12,13 +12,8 @@ def director_list_view(request):
         data = serializer.DirectorSerializer(director, many=True).data
         return Response(data=data)
     elif request.method == 'POST':
-        serializers = serializer.DirectorCreateUpdateSerializer(data=request.data)
-        if not serializers.is_valid():
-            return Response(data={'errors': serializers.errors},
-                            status=status.HTTP_406_NOT_ACCEPTABLE)
-        print(request.data)
-        name = request.data.get('name')
-        director = models.Director.objects.create(name=name)
+        # name = request.data.get('name')
+        director = models.Director.objects.create(**request.data)
         return Response(data=serializer.DirectorSerializer(director).data,
                         status=status.HTTP_201_CREATED)
 
@@ -49,17 +44,11 @@ def movie_list_view(request):
         data = serializer.MovieSerializer(movie, many=True).data
         return Response(data=data)
     elif request.method == 'POST':
-        serializers = serializer.MovieCreateUpdateSerializer(data=request.data)
-        if not serializers.is_valid():
-            return Response(data={'errors': serializers.errors},
-                            status=status.HTTP_406_NOT_ACCEPTABLE)
-        print(request.data)
-        title = request.data.get('title')
-        description = request.data.get('description')
-        duration = request.data.get('duration')
-        director_id = request.data.get('director_id')
-        movie = models.Movie.objects.create(title=title, description=description, duration=duration,
-                                            director_id=director_id)
+        # title = request.data.get('title')
+        # description = request.data.get('description')
+        # duration = request.data.get('duration')
+        # director_id = request.data.get('director_id')
+        movie = models.Movie.objects.create(**request.data)
 
         return Response(data=serializer.MovieSerializer(movie).data,
                         status=status.HTTP_201_CREATED)
@@ -95,15 +84,10 @@ def review_list_view(request):
         data = serializer.ReviewSerializer(review, many=True).data
         return Response(data=data)
     elif request.method == 'POST':
-        serializers = serializer.ReviewCreateUpdateSerializer(data=request.data)
-        if not serializers.is_valid():
-            return Response(data={'errors': serializers.errors},
-                            status=status.HTTP_406_NOT_ACCEPTABLE)
-        print(request.data)
-        text = request.data.get('text')
-        movie = request.data.get('movie')
-        stars = request.data.get('stars')
-        review = models.Review.objects.create(text=text, movie=movie, stars=stars)
+        # text = request.data.get('text')
+        # movie = request.data.get('movie')
+        # stars = request.data.get('stars')
+        review = models.Review.objects.create(**request.data)
         return Response(data=serializer.ReviewSerializer(review).data,
                         status=status.HTTP_201_CREATED)
 
