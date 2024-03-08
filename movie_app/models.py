@@ -31,6 +31,7 @@ class Movie(models.Model):
 
 class Review(models.Model):
     text = models.TextField()
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='reviews', null=True)
     stars = models.IntegerField(default=1, choices=[(i, i * '*') for i in range(6)])
 
