@@ -26,10 +26,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     'movie_app',
     'rest_framework.authtoken',
     'class_based_views',
-    'django_filters',
 ]
 
 REST_FRAMEWORK = {
@@ -80,8 +80,12 @@ WSGI_APPLICATION = 'Afisha.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'maksat_6970',
+        'PORT': 5432,
+        'HOST': 'localhost',
+        'USER': 'maksat',
+        'PASSWORD': 'maks6970',
     }
 }
 
