@@ -12,10 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if os.environ.get("DEBUG")=='on':
-    DEBUG = True
-else:
-    DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['Maksat.pythonanywhere.com']
 
